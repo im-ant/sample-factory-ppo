@@ -34,7 +34,7 @@ def add_basic_cli_args(p: ArgumentParser):
 
     def device_type_check(device_value):
         if device_value == "gpu" or device_value == "cpu":
-            return value
+            return device_value
         elif re.match(r"^cuda:\d+$", device_value):
             return device_value
         else:
