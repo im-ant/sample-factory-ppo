@@ -1,5 +1,7 @@
+import argparse
 import multiprocessing
 import os
+import re
 from argparse import ArgumentParser
 from os.path import join
 
@@ -30,12 +32,19 @@ def add_basic_cli_args(p: ArgumentParser):
         "This parameter does not have any effect if the experiment directory does not exist.",
     )
 
+    def device_type_check(device_value):
+        if device_value == "gpu" or device_value == "cpu":
+            return value
+        elif re.match(r"^cuda:\d+$", device_value):
+            return device_value
+        else:
+            raise argparse.ArgumentTypeError(f"Invalid input: {device_value}")
+
     p.add_argument(
         "--device",
         default="gpu",
-        type=str,
-        choices=["gpu", "cpu"],
-        help="CPU training is only recommended for smaller e.g. MLP policies",
+        type=device_type_check,
+        help="Allowed: [gpu, cpu, cuda:idx]. CPU training is only recommended for smaller e.g. MLP policies",
     )
     p.add_argument("--seed", default=None, type=int, help="Set a fixed seed value")
 
